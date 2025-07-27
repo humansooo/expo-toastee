@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "toastee",
-    "slug": "toastee",
+    "name": "expo-toastee-demo",
+    "slug": "expo-toastee-demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
