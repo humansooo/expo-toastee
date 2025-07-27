@@ -85,11 +85,46 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: 🏷️ Create GitHub Release
+        if: steps.version-check.outputs.should-publish == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version-check.outputs.current-version }}
+          release_name: 🍞 Expo Toastee v${{ steps.version-check.outputs.current-version }}
+          body: |
+            ## 🚀 What's New in v${{ steps.version-check.outputs.current-version }}
+            
+            ### 📦 Installation
+            ```bash
+            npm install expo-toastee@${{ steps.version-check.outputs.current-version }}
+            # or
+            yarn add expo-toastee@${{ steps.version-check.outputs.current-version }}
+            # or
+            bun add expo-toastee@${{ steps.version-check.outputs.current-version }}
+            ```
+            
+            ### 🔗 Links
+            - 📦 [NPM Package](https://www.npmjs.com/package/expo-toastee)
+            - 📚 [Documentation](https://github.com/humansooo/expo-toastee#readme)
+            - 🐛 [Report Issues](https://github.com/humansooo/expo-toastee/issues)
+            
+            ### 📝 Changelog
+            See the [commit history](https://github.com/humansooo/expo-toastee/compare/v${{ steps.version-check.outputs.published-version }}...v${{ steps.version-check.outputs.current-version }}) for detailed changes.
+            
+            ---
+            
+            **Made with ❤️ for the React Native Expo community**
+          draft: false
+          prerelease: false
+
       - name: 🎉 Success notification
         if: steps.version-check.outputs.should-publish == 'true'
         run: |
-          echo "🎉 Successfully published expo-toastee@${{ steps.version-check.outputs.current-version }} to NPM!"
-          echo "📦 Package URL: https://www.npmjs.com/package/expo-toastee"
+          echo "🎉 Successfully published expo-toastee@${{ steps.version-check.outputs.current-version }}!"
+          echo "📦 NPM: https://www.npmjs.com/package/expo-toastee"
+          echo "🏷️ Release: https://github.com/humansooo/expo-toastee/releases/tag/v${{ steps.version-check.outputs.current-version }}"
 
       - name: ⏭️ Skip notification
         if: steps.version-check.outputs.should-publish == 'false'
