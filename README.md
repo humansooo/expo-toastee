@@ -1,6 +1,6 @@
 # 🍞 Expo Toastee
 
-> **Current Version:** `2.0.3`
+> **Current Version:** `2.0.4`
 
 
 A modern, elegant toast notification library for React Native Expo applications with Material You and Neobrutalist themes.

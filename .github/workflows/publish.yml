@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   # Test and Build Job
   test-and-build:
@@ -87,12 +91,10 @@ jobs:
 
       - name: 🏷️ Create GitHub Release
         if: steps.version-check.outputs.should-publish == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.version-check.outputs.current-version }}
-          release_name: 🍞 Expo Toastee v${{ steps.version-check.outputs.current-version }}
+          name: 🍞 Expo Toastee v${{ steps.version-check.outputs.current-version }}
           body: |
             ## 🚀 What's New in v${{ steps.version-check.outputs.current-version }}
             
@@ -118,6 +120,8 @@ jobs:
             **Made with ❤️ for the React Native Expo community**
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🎉 Success notification
         if: steps.version-check.outputs.should-publish == 'true'
