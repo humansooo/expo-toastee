@@ -1,0 +1,98 @@
+name: 🚀 Build and Publish to NPM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Test and Build Job
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Type check
+        run: bun run tsc --noEmit
+
+      - name: 🏗️ Build package
+        run: bun run build
+
+      - name: 📋 Check build output
+        run: |
+          echo "Build completed successfully!"
+          ls -la dist/
+          echo "Package size:"
+          du -sh dist/
+
+  # Publish Job (only on main branch)
+  publish:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 🔧 Setup Node.js for npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🏗️ Build package
+        run: bun run build
+
+      - name: 🔍 Check if version changed
+        id: version-check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED_VERSION=$(npm view expo-toastee version 2>/dev/null || echo "0.0.0")
+          echo "current-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "published-version=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
+          
+          if [ "$CURRENT_VERSION" != "$PUBLISHED_VERSION" ]; then
+            echo "should-publish=true" >> $GITHUB_OUTPUT
+            echo "✅ Version changed from $PUBLISHED_VERSION to $CURRENT_VERSION"
+          else
+            echo "should-publish=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ Version unchanged ($CURRENT_VERSION), skipping publish"
+          fi
+
+      - name: 🚀 Publish to NPM
+        if: steps.version-check.outputs.should-publish == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🎉 Success notification
+        if: steps.version-check.outputs.should-publish == 'true'
+        run: |
+          echo "🎉 Successfully published expo-toastee@${{ steps.version-check.outputs.current-version }} to NPM!"
+          echo "📦 Package URL: https://www.npmjs.com/package/expo-toastee"
+
+      - name: ⏭️ Skip notification
+        if: steps.version-check.outputs.should-publish == 'false'
+        run: |
+          echo "⏭️ Skipped publishing - version unchanged"
+          echo "💡 To publish, increment the version in package.json" 

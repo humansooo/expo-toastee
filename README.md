@@ -405,6 +405,30 @@ Expo Toastee is built with performance in mind:
 - Expo SDK 47+
 - React 17+
 
+## Automated Publishing
+
+This package uses GitHub Actions for automated CI/CD:
+
+### 🔄 **Workflow Features:**
+- **Continuous Integration**: Runs on every PR and push to main
+- **Automated Testing**: Type checking and build verification
+- **Smart Publishing**: Only publishes when version number changes
+- **Bun Integration**: Fast builds and dependency management
+
+### 🚀 **Publishing Process:**
+1. **Push to main** with updated version in `package.json`
+2. **GitHub Actions** automatically:
+   - Installs dependencies with Bun
+   - Runs type checking
+   - Builds the package
+   - Compares versions with npm registry
+   - Publishes if version changed
+
+### ⚙️ **Setup Requirements:**
+To enable automated publishing, add `NPM_TOKEN` to your GitHub repository secrets:
+1. Go to your repo → Settings → Secrets and variables → Actions
+2. Add `NPM_TOKEN` with your npm access token
+
 ## Roadmap
 
 - [ ] Icon support for toast types
