@@ -1,6 +1,6 @@
 {
   "name": "expo-toastee",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A simple and elegant toast notification library for React Native Expo with Material You and Neobrutalist themes",
   "main": "index.ts",
   "types": "dist/index.d.ts",

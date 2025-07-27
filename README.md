@@ -1,5 +1,8 @@
 # 🍞 Expo Toastee
 
+> **Current Version:** `2.0.2`
+
+
 A modern, elegant toast notification library for React Native Expo applications with Material You and Neobrutalist themes.
 
 ## Features
@@ -22,7 +25,6 @@ A modern, elegant toast notification library for React Native Expo applications 
 - 🛠️ **Developer friendly** - built with Bun for faster development
 
 ## Installation
-
 ```bash
 npm install expo-toastee
 # or
